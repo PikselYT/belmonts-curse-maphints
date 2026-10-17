@@ -6,6 +6,8 @@
   <img alt="Windows" src="https://img.shields.io/badge/platform-Windows-0078d4">
 </p>
 
+<p align="center"><img src="docs/map-hints.png" alt="The in-game map with red frames and coloured squares on the secrets and collectibles still missing" width="900"></p>
+
 Open the map and the mod draws what you have not found yet in the world the map shows:
 
 | Marker | Meaning |
