@@ -33,11 +33,40 @@ namespace MapHints
         static readonly Dictionary<string, WorldHints> _cache = new Dictionary<string, WorldHints>();
         static Dictionary<string, int> _totals;
 
+        /// <summary>Format of the hint tool's data/*.json this build understands (meta.json "data_version").</summary>
+        public const int SupportedDataVersion = 3;
+        static bool? _dataOk;
+
         static string DataDir()
         {
             string cfg = Plugin.DataDirectory.Value;
             if (!string.IsNullOrWhiteSpace(cfg)) return cfg;
             return Path.Combine(Path.GetDirectoryName(typeof(Plugin).Assembly.Location) ?? ".", "data");
+        }
+
+        /// <summary>False (with a log message) when the data is missing meta.json or has an unsupported format version.</summary>
+        public static bool DataUsable()
+        {
+            if (_dataOk.HasValue) return _dataOk.Value;
+            bool ok = false;
+            try
+            {
+                string f = Path.Combine(DataDir(), "meta.json");
+                if (!File.Exists(f))
+                    Plugin.Logger.LogError($"meta.json not found in {DataDir()}. Run the hint tool's run_extract.bat (hint tool 1.2.0 or newer) so the data lands here.");
+                else
+                    using (var doc = JsonDocument.Parse(File.ReadAllText(f)))
+                    {
+                        int v = doc.RootElement.TryGetProperty("data_version", out var e) ? e.GetInt32() : -1;
+                        ok = v == SupportedDataVersion;
+                        if (!ok)
+                            Plugin.Logger.LogError($"Hint data has format version {v}, but Map Hints {PluginInfo.Version} needs {SupportedDataVersion}. " +
+                                "Update the hint tool and/or this mod (see the compatibility table in the README), then run run_extract.bat again.");
+                    }
+            }
+            catch (Exception e) { Plugin.Logger.LogError("Reading meta.json failed: " + e); }
+            _dataOk = ok;
+            return ok;
         }
 
         /// <summary>Total completion item count of a world (CompletionAggregator), or 0 when unknown.</summary>
@@ -72,6 +101,7 @@ namespace MapHints
         public static WorldHints Get(string world)
         {
             if (_cache.TryGetValue(world, out var cached)) return cached;
+            if (!DataUsable()) { _cache[world] = null; return null; }
             WorldHints result = null;
             try
             {

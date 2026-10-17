@@ -12,12 +12,19 @@ using UnityEngine.InputSystem;
 
 namespace MapHints
 {
+    internal static class PluginInfo
+    {
+        public const string Guid = "pikselyt.belmontscurse.maphints";
+        public const string Name = "Map Hints";
+        public const string Version = "0.2.0";   // keep in step with <Version> in MapHints.csproj
+    }
+
     /// <summary>
-    /// Once a world is almost complete (default 95%), highlights the secret zones and collectibles you still
+    /// Highlights the secret zones and collectibles you still
     /// miss on the in-game map. Positions come from the hint tool's extracted data; what you already have
     /// is read live from the game.
     /// </summary>
-    [BepInPlugin("pikselyt.belmontscurse.maphints", "Map Hints", "0.1.0")]
+    [BepInPlugin(PluginInfo.Guid, PluginInfo.Name, PluginInfo.Version)]
     public class Plugin : BasePlugin
     {
         internal static ManualLogSource Logger;
@@ -52,7 +59,7 @@ namespace MapHints
 
             ClassInjector.RegisterTypeInIl2Cpp<Runner>();
             AddComponent<Runner>();
-            Logger.LogInfo("Map Hints 0.1.0 loaded");
+            Logger.LogInfo($"{PluginInfo.Name} {PluginInfo.Version} loaded");
         }
     }
 

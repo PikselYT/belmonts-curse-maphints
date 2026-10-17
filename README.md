@@ -29,14 +29,23 @@ Things you already found or destroyed disappear. It works for every world on the
 1. The **BepInEx 6 (IL2CPP)** mod loader in the game folder (build 6.0.0-be.789 is what this was made on).
    The [Spell Swap](https://github.com/PikselYT/belmonts-curse-spellswap) installer sets it up for you.
 2. **Map data from your own game.** It is not included. Generate it with the companion tool
-   [belmonts-curse-secret-hints](https://github.com/PikselYT/belmonts-curse-secret-hints): run `setup.bat`, then `run_extract.bat`.
-   It writes `data/*.json`.
+   [belmonts-curse-secret-hints](https://github.com/PikselYT/belmonts-curse-secret-hints) (1.2.0 or newer):
+   run `setup.bat`, then `run_extract.bat`.
+
+| Map Hints | Hint tool | data format |
+|---|---|---|
+| 0.2.x | 1.2.x | 3 |
+| 0.1.x | 1.0.x - 1.1.x | 3 (no version check) |
 
 ## Install
-1. Build the plugin (see below) or take `MapHints.dll` from a release, and put it in `BepInEx\plugins\MapHints\`.
-2. Copy `World_Biome_*.json` and `completion.json` from the hint tool's `data` folder into `BepInEx\plugins\MapHints\data\`
-   (or set `DataDirectory` in the config to the hint tool's `data` folder).
+1. Download `MapHints-<version>.zip` from the [latest release](https://github.com/PikselYT/belmonts-curse-maphints/releases/latest)
+   and extract it into the game folder (you get `BepInEx\plugins\MapHints\MapHints.dll`).
+   Or build it yourself (see below).
+2. Run the hint tool's `run_extract.bat`. If the mod is installed, the tool copies the data into
+   `BepInEx\plugins\MapHints\data` by itself. (Manual way: copy `World_Biome_*.json`, `completion.json` and `meta.json`
+   there, or set `DataDirectory` in the config to the tool's `data` folder.)
 3. Start the game and open the map. The first start with BepInEx is slow; that is normal.
+   If nothing shows up, check `BepInEx\LogOutput.log` for a "Hint data has format version" message.
 
 ## Options
 `BepInEx\config\pikselyt.belmontscurse.maphints.cfg` (created on the first start):
@@ -66,6 +75,7 @@ Things you already found or destroyed disappear. It works for every world on the
 Needs the .NET SDK and a game install where BepInEx has been started once (it generates `BepInEx\interop`).
 ```
 dotnet build src/MapHints -c Release -p:GameDir="C:\path\to\Castlevania Belmont's Curse\"
+powershell -File build.ps1      # also packs dist\MapHints-<version>.zip
 ```
 The build copies the plugin into the game's `BepInEx\plugins\MapHints\` (disable with `-p:Deploy=false`).
 Close the game first, or the DLL is locked.
