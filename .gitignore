@@ -1,0 +1,10 @@
+# build output
+bin/
+obj/
+dist/
+build/
+out/
+*.user
+.vs/
+# game-derived data never goes in the repo
+data/
